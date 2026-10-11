@@ -200,13 +200,17 @@ def google_auth(payload: GoogleAuthRequest, db: Session = Depends(get_db)):
 
     if payload.credential:
         try:
-            from google.oauth2 import id_token
-            from google.auth.transport import requests
-            import os
-            client_id = os.getenv("GOOGLE_CLIENT_ID")
-            idinfo = id_token.verify_oauth2_token(payload.credential, requests.Request(), client_id)
-            email = idinfo.get("email")
-            name = idinfo.get("name")
+            import urllib.request
+            import json
+            req = urllib.request.Request(
+                f"https://oauth2.googleapis.com/tokeninfo?id_token={payload.credential}",
+                headers={"User-Agent": "PerFin"}
+            )
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                if resp.status == 200:
+                    idinfo = json.loads(resp.read().decode("utf-8"))
+                    email = idinfo.get("email")
+                    name = idinfo.get("name")
         except Exception:
             try:
                 import jwt

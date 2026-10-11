@@ -2,7 +2,7 @@
  * Login Page styled after the modern SaaS design system.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ArrowRight, Lock, Mail, ShieldAlert, Sparkles, Check } from 'lucide-react';
@@ -16,6 +16,57 @@ export const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  useEffect(() => {
+    if (!googleClientId) return;
+
+    const setupGoogle = () => {
+      const g = (window as any).google;
+      if (g?.accounts?.id) {
+        g.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: async (response: any) => {
+            setError(null);
+            setIsGoogleSubmitting(true);
+            try {
+              await loginWithGoogle({ credential: response.credential });
+              navigate('/dashboard');
+            } catch (err: any) {
+              setError(err.message || 'Google Authentication failed.');
+            } finally {
+              setIsGoogleSubmitting(false);
+            }
+          },
+        });
+
+        const container = document.getElementById('google-native-btn');
+        if (container) {
+          container.innerHTML = '';
+          g.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            width: 380,
+            text: 'continue_with',
+            shape: 'pill',
+          });
+        }
+      }
+    };
+
+    if ((window as any).google?.accounts?.id) {
+      setupGoogle();
+    } else {
+      const timer = setInterval(() => {
+        if ((window as any).google?.accounts?.id) {
+          clearInterval(timer);
+          setupGoogle();
+        }
+      }, 200);
+      return () => clearInterval(timer);
+    }
+  }, [googleClientId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +86,13 @@ export const LoginPage: React.FC = () => {
     setError(null);
     setIsGoogleSubmitting(true);
     try {
+      // If GSI is initialized with a real client ID, trigger the Google prompt
+      const g = (window as any).google;
+      if (googleClientId && g?.accounts?.id) {
+        g.accounts.id.prompt();
+        return;
+      }
+      // Otherwise, use seamless fallback SSO
       await loginWithGoogle();
       navigate('/dashboard');
     } catch (err: any) {
@@ -109,6 +167,7 @@ export const LoginPage: React.FC = () => {
 
         {/* Continue with Google Button */}
         <div className="space-y-4">
+          <div id="google-native-btn" className="flex justify-center empty:hidden"></div>
           <button
             type="button"
             onClick={handleGoogleSignIn}

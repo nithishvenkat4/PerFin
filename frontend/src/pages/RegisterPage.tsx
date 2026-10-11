@@ -2,7 +2,7 @@
  * Registration Page styled after the modern SaaS design system.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ArrowRight, Lock, Mail, ShieldAlert, User, Sparkles } from 'lucide-react';
@@ -18,6 +18,57 @@ export const RegisterPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
+  useEffect(() => {
+    if (!googleClientId) return;
+
+    const setupGoogle = () => {
+      const g = (window as any).google;
+      if (g?.accounts?.id) {
+        g.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: async (response: any) => {
+            setError(null);
+            setIsGoogleSubmitting(true);
+            try {
+              await loginWithGoogle({ credential: response.credential });
+              navigate('/dashboard');
+            } catch (err: any) {
+              setError(err.message || 'Google Registration failed.');
+            } finally {
+              setIsGoogleSubmitting(false);
+            }
+          },
+        });
+
+        const container = document.getElementById('google-native-btn-reg');
+        if (container) {
+          container.innerHTML = '';
+          g.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            width: 380,
+            text: 'signup_with',
+            shape: 'pill',
+          });
+        }
+      }
+    };
+
+    if ((window as any).google?.accounts?.id) {
+      setupGoogle();
+    } else {
+      const timer = setInterval(() => {
+        if ((window as any).google?.accounts?.id) {
+          clearInterval(timer);
+          setupGoogle();
+        }
+      }, 200);
+      return () => clearInterval(timer);
+    }
+  }, [googleClientId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +92,11 @@ export const RegisterPage: React.FC = () => {
     setError(null);
     setIsGoogleSubmitting(true);
     try {
+      const g = (window as any).google;
+      if (googleClientId && g?.accounts?.id) {
+        g.accounts.id.prompt();
+        return;
+      }
       await loginWithGoogle();
       navigate('/dashboard');
     } catch (err: any) {
@@ -85,6 +141,7 @@ export const RegisterPage: React.FC = () => {
 
         {/* Continue with Google Button */}
         <div className="space-y-4">
+          <div id="google-native-btn-reg" className="flex justify-center empty:hidden"></div>
           <button
             type="button"
             onClick={handleGoogleSignUp}
