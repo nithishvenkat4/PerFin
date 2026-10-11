@@ -1,4 +1,5 @@
 services:
+  # PostgreSQL: Primary Relational Engine for Authoritative Financial Data
   db:
     image: postgres:16-alpine
     container_name: finmate_db
@@ -17,6 +18,39 @@ services:
       timeout: 5s
       retries: 5
 
+  # MongoDB: Document Store for Notes, AI Conversations, and Notifications
+  mongodb:
+    image: mongo:7.0-jammy
+    container_name: finmate_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - finmate_mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Node.js + Express REST Microservice (Full Stack Lab Requirement)
+  node-api:
+    build:
+      context: ./node-service
+      dockerfile: Dockerfile
+    container_name: finmate_node_api
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongodb:27017/finmate
+      - JWT_SECRET=production-secure-finmate-key-must-be-rotated-32char
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  # FastAPI: Core Financial Calculations, ML Pipelines, & Decision Support
   backend:
     build:
       context: ./backend
@@ -26,9 +60,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - APP_NAME=FinMate
+      - APP_NAME=PerFin
       - APP_ENV=production
-      - APP_VERSION=0.1.0
+      - APP_VERSION=2.0.0
       - DEBUG=False
       - SECRET_KEY=production-secure-finmate-key-must-be-rotated-32char
       - DATABASE_URL=postgresql+psycopg://postgres:postgrespassword@db:5432/finmate_db
@@ -38,6 +72,7 @@ services:
       db:
         condition: service_healthy
 
+  # React 19 Frontend: Neo-Brutalist Technical Dashboard
   frontend:
     build:
       context: ./frontend
@@ -48,7 +83,10 @@ services:
       - "3000:80"
     depends_on:
       - backend
+      - node-api
 
 volumes:
   finmate_pgdata:
+    driver: local
+  finmate_mongodata:
     driver: local

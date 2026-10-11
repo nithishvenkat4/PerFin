@@ -7,13 +7,13 @@ import { Investment } from '../types';
 import { formatINR } from '../utils/formatters';
 
 interface InvestmentsPageProps {
-  refreshKey: number;
-  onRefresh: () => void;
+  refreshKey?: number;
+  onRefresh?: () => void;
 }
 
 export const InvestmentsPage: React.FC<InvestmentsPageProps> = ({
-  refreshKey,
-  onRefresh,
+  refreshKey = 0,
+  onRefresh = () => {},
 }) => {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);

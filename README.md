@@ -1,493 +1,285 @@
-# FinMate — Personal Financial Decision-Support Agent & Ingestion Ecosystem
+# FinMate 2.0 — Personal Finance Management & Decision Support Platform
 
-FinMate is an enterprise-grade personal financial decision-support system engineered to provide accurate, transparent, and mathematically verified financial insights. The platform unifies a deterministic calculation engine, predictive machine learning models, semantic regulatory retrieval-augmented generation (RAG), a collaborative multi-agent orchestration architecture, an interactive React workspace, and a native Android background SMS ingestion engine.
+**FinMate** is an enterprise-grade, full-stack personal finance and decision-support platform engineered for production environments and designed as a comprehensive demonstration project for **Full Stack Web Development Lab** evaluations (CAT-II, Viva, and Portfolio).
 
-FinMate operates strictly as a decision-support system. It never acts as an autonomous financial agent: it does not execute trades, perform money transfers, or apply state-modifying ledger updates without verified human-in-the-loop authorization.
+FinMate combines **deterministic monetary arithmetic**, **predictive machine learning models**, **multi-agent financial decision support**, and a **dual-database architecture** (PostgreSQL for authoritative financial ledgers + MongoDB for unstructured conversational documents), wrapped in a high-contrast **Technical Neo-Brutalist / Cyber-Terminal user interface**.
+
+> [!IMPORTANT]
+> **Decision-Support Guarantee:** FinMate is educational and decision-support software. It does NOT execute automated bank transfers, trade securities, or mutate financial accounts autonomously. All monetary calculations are backend-deterministic (`Decimal`), and state mutations require human-in-the-loop (HITL) authorization.
 
 ---
 
-## Executive Summary & Engineering Highlights
+## 1. System Architecture Overview
 
-| Dimension | Specification / Metric | Technical Implementation |
+FinMate 2.0 utilizes a modular, microservice-ready full-stack architecture:
+
+```mermaid
+graph TD
+    subgraph Client Tier
+        UI[React 19 + TypeScript SPA<br/>Vite / Neo-Brutalist Design System]
+        Mobile[Native Android Client<br/>Kotlin / Room / WorkManager SMS Ingestion]
+    end
+
+    subgraph API & Service Tier
+        FastAPI[Python FastAPI Core Service :8000<br/>JWT Auth / Financial CRUD / ML Pipelines / Multi-Agent Engine]
+        NodeAPI[Node.js Express Document Microservice :5000<br/>JWT Auth Middleware / Mongoose / AI Conversations & Notes]
+    end
+
+    subgraph Data Tier
+        Postgres[(PostgreSQL / SQLite Fallback<br/>Users, Transactions, Budgets, Goals, Incomes, Subscriptions)]
+        Mongo[(MongoDB / Document Store Fallback<br/>AI Conversation History, Financial Notes)]
+    end
+
+    subgraph AI / ML & Decision Engine
+        ML[LinearSVC Classifier / Isolation Forest Anomaly / Ridge Forecaster]
+        RAG[Regulatory Vector RAG<br/>RBI, SEBI, FPSB Guidelines]
+        Agents[Multi-Agent Orchestrator & In-Memory What-If Simulator]
+    end
+
+    UI -->|REST / JSON| FastAPI
+    UI -->|REST / JSON| NodeAPI
+    Mobile -->|POST /api/v1/transactions/from-sms| FastAPI
+
+    FastAPI --> Postgres
+    NodeAPI --> Mongo
+    FastAPI --> ML
+    FastAPI --> RAG
+    FastAPI --> Agents
+```
+
+---
+
+## 2. Technology Stack & Rubric Compliance
+
+FinMate 2.0 satisfies all 20 requirements of the **Full Stack Web Development Lab Rubric**:
+
+| Lab Dimension | Technology | Project Implementation |
 | :--- | :--- | :--- |
-| Core Architecture | Multi-Agent Orchestration + Clean Layered Backend | FastAPI, Pydantic v2, SQLAlchemy 2.0 ORM, Python 3.11+ |
-| Computation Standard | Zero-Deviation Exact Monetary Arithmetic | Python Decimal (`ROUND_HALF_UP`), SQL `NUMERIC(15, 2)` |
-| Transaction Classification | 98.4% Accuracy, 0.9849 Macro F1-Score | LinearSVC Champion Model + Scikit-Learn TF-IDF Pipeline |
-| Time-Series Forecasting | Holdout MAE: INR 3,369.93 | Ridge Regression with Strict Lagged Features & 90% Confidence Intervals |
-| Anomaly Detection | Statistical Expenditure Spike Identification | Unsupervised Isolation Forest (Contamination: 0.05) |
-| Regulatory Knowledge RAG | 93.3% Hit Rate @ 3, 0.95ms Latency | Cosine Vector Similarity over RBI, SEBI, and FPSB India Guidelines |
-| Governance Model | 3-Tier Human-in-the-Loop (HITL) Engine | 15-Minute Expiration Window, Two-Step State Mutation Gating |
-| Counterfactual Analysis | In-Memory What-If Simulation Sandbox | Isolated In-Memory Delta Computations without Database Side-Effects |
-| Mobile Telemetry | Privacy-First Native Android Ingestion | Kotlin, AndroidX Room, WorkManager, On-Device Regex Parsing |
-| Test Coverage | 102 / 102 Automated Tests Passing (100%) | Pytest Unit, Integration, and Data Pipeline Test Suites |
-| Benchmark Performance | 12 / 12 Standard Agent Benchmark Tasks (100%) | End-to-End Orchestrator Decision Evaluation Matrix |
-| Frontend Platform | Zero-Error Production Build | React 19, TypeScript, Vite, Tailwind CSS, Lucide, Recharts |
+| **HTML5 & Semantic Structure** | HTML5 Semantic Elements | Proper `<header>`, `<main>`, `<nav>`, `<section>`, `<footer>`, `<dialog>`, semantic forms, and accessible input labeling. |
+| **CSS & Design System** | Tailwind CSS v4 + Vanilla CSS Tokens | **Technical Neo-Brutalist Aesthetic**: stark 2px solid `#000000` borders, `#D4FF00` neon lime accents, Space Grotesk headings, JetBrains Mono monospace code labels (`>_ TERMINAL ID // FIN_CHANNEL_01`), off-white `#F7F7F4` grid backgrounds. |
+| **JavaScript & AJAX** | Modern ECMAScript (ES2024), Async/Await, Fetch | Asynchronous data fetching, debounced search, custom HTTP request wrappers (`api.ts`), error interception, JSON marshaling. |
+| **JSON** | Native JSON parsing & serialization | Consistent REST payload structures, standardized JSON error objects, and structured LLM agent tool call payloads. |
+| **React & Component Tree** | React 19, TypeScript, Recharts, Lucide Icons | Reusable UI components: `Header`, `TerminalBanner`, `HealthScoreDial`, `StatCard`, `TabNav`, `NotificationBanner`, `Modal`, `ConfirmModal`. |
+| **React Routing** | React Router v7 (`react-router-dom`) | Declarative client-side routing, protected route wrappers (`<ProtectedRoute>`, `<AdminRoute>`), deep links, URL search params. |
+| **React State Management** | React Context + State Hooks (`useState`, `useEffect`, `useMemo`) | `AuthContext` for global session, user identity, JWT token persistence, and role-based access control. |
+| **Node.js REST API** | Node.js v20+, Express.js | Microservice listening on port 5000: `/api/notes`, `/api/conversations`, `/api/health`. |
+| **Express Middleware** | Custom Express Middleware | `authMiddleware` (HS256 JWT validation), `validateNote` & `validateConversation` (input sanitization), `errorHandler` (centralized HTTP errors), CORS. |
+| **MongoDB Database** | MongoDB v7+ via Mongoose ODM | Document collections: `ai_conversations` (chat history with role/timestamp arrays), `financial_notes` (pinned notes, tags, metadata). Resilient JSON document store fallback. |
+| **PostgreSQL Database** | PostgreSQL 16 via SQLAlchemy 2.0 ORM | Authoritative financial ledger: `users`, `financial_profiles`, `transactions`, `categories`, `budgets`, `incomes`, `goals`, `investments`, `subscriptions`, `recurring_payments`, `notifications`, `audit_logs`. Zero-config SQLite fallback (`finmate.db`). |
+| **Authentication & RBAC** | PBKDF2 Password Hashing + HS256 JWT | Roles: `USER` and `ADMIN`. Secure token passing in `Authorization: Bearer <token>`, role toggling, session invalidation. |
+| **AI / Machine Learning** | Scikit-Learn, LinearSVC, Isolation Forest, Ridge | Transaction category auto-classification (98.4% Acc), expense forecasting with 90% confidence bands, spending anomaly detection. |
+| **Data Visualization** | Recharts (SVG-based reactive charts) | Income vs. Expense bar charts, category allocation donut charts, spending trends, circular health score SVG gauge dials. |
 
 ---
 
-## Master System Architecture
+## 3. Product Roles & Application Routes
 
-```
-+---------------------------------------------------------------------------------------------------+
-|                                          CLIENT INTERFACES                                        |
-|                                                                                                   |
-|   +---------------------------------------+       +-------------------------------------------+   |
-|   |         React 19 Web Workspace        |       |          Native Android Client            |   |
-|   |   (TypeScript, Vite, Tailwind CSS,    |       |   (Kotlin, Room DB, WorkManager,          |   |
-|   |    Live Agent Trace, HITL Diff Cards) |       |    On-Device Regex, Zero Raw SMS Upload)  |   |
-|   +---------------------------------------+       +-------------------------------------------+   |
-+-----------------------│-------------------------------------------------│-------------------------+
-                        │ HTTP / JSON                                     │ POST /api/v1/transactions/from-sms
-                        ▼                                                 ▼
-+---------------------------------------------------------------------------------------------------+
-|                                      FASTAPI REST API GATEWAY                                     |
-|                              (/api/v1/* Routing, Pydantic v2 Validation)                          |
-+---------------------------------------------------------------------------------------------------+
-         │                                       │                                       │
-         ▼                                       ▼                                       ▼
-+---------------------------------+ +---------------------------------+ +---------------------------+
-|    MULTI-AGENT ORCHESTRATION    | |    MACHINE LEARNING & RAG       | |    DATA & COMPUTATION     |
-|                                 | |                                 | |                           |
-| - AI Orchestrator (DAG Router)  | | - LinearSVC Classifier          | | - Deterministic Math      |
-| - Transaction Specialist        | |   (10 Categories, 98.4% Acc)    | |   (Python Decimal Engine) |
-| - Budget Specialist             | | - Ridge Expense Forecaster      | | - 11-Rule Data Quality    |
-| - Goal Specialist               | |   (Lagged Features, 90% Bands)  | |   Engine (Error/Warn/Info)|
-| - Investment Specialist         | | - Isolation Forest Anomaly      | | - CSV Ingestion Pipeline  |
-| - Decision Synthesis Specialist | |   Detection                     | |   (Delimiter/Encoding)    |
-| - 15-Tool Governed Registry     | | - Semantic Vector RAG Engine    | | - Duplicate Detection     |
-| - 3-Tier HITL Approval Engine   | |   (RBI, SEBI, FPSB Guidelines)  | |   (Sliding Window Hash)   |
-| - In-Memory What-If Sandbox     | | - Multi-Provider LLM Gateway    | | - Lineage Tracking        |
-+---------------------------------+ +---------------------------------+ +---------------------------+
-         │                                       │                                       │
-         └───────────────────────────────────────┼───────────────────────────────────────┘
-                                                 ▼
-+---------------------------------------------------------------------------------------------------+
-|                                      PERSISTENCE & STORAGE LAYER                                  |
-|                                                                                                   |
-|   SQLAlchemy 2.0 ORM  <--->  Primary: PostgreSQL (Docker)  |  Resilient Fallback: SQLite         |
-|   Entities: User, FinancialProfile, Transaction, Category, Goal, Investment, ImportRecord,       |
-|             AgentTask, AgentApproval, AgentToolCall                                               |
-+---------------------------------------------------------------------------------------------------+
-```
+### Roles
+- **USER:** Personal financial ledger, transaction tracking, ML auto-categorization, category budgets, financial goals, emergency fund calculation, subscriptions, financial calendar, analytics, AI financial advisor, What-If simulation sandbox, CSV statement ingestion, MongoDB notes & conversation threads.
+- **ADMIN:** Central operations workspace, user governance (promote/demote roles), audit log inspection (50+ tracked events), transaction monitoring, and system diagnostic telemetry.
+
+### Frontend Route Map
+
+| Category | Route | Component | Purpose |
+| :--- | :--- | :--- | :--- |
+| **Public** | `/login` | `LoginPage` | User / Admin login with quick demo credentials |
+| **Public** | `/register` | `RegisterPage` | Account registration with automatic PBKDF2 password hashing |
+| **User** | `/dashboard` | `DashboardPage` | Executive health score, summary stats, spending charts, recent activity |
+| **User** | `/transactions` | `TransactionsPage` | Complete transaction ledger with search, category filtering, and CRUD |
+| **User** | `/income` | `IncomePage` | Dedicated income management (Salary, Freelance, Business, Investment) |
+| **User** | `/expenses` | `ExpensesPage` | Dedicated expense tracker with ML auto-categorization preview |
+| **User** | `/budgets` | `BudgetsPage` | Category-based monthly spending limits with 80% warning and 100% overrun alerts |
+| **User** | `/goals` | `GoalsPage` | Goal progress tracking + Deterministic Emergency Fund coverage calculator |
+| **User** | `/investments` | `InvestmentsPage` | Asset allocation and portfolio tracking |
+| **User** | `/subscriptions` | `SubscriptionsPage` | Monthly and annual recurring service tracking |
+| **User** | `/calendar` | `CalendarPage` | Financial calendar showing salary, renewals, bills, and deadlines |
+| **User** | `/analytics` | `AnalyticsPage` | Historical trends, category distribution, savings rate breakdown |
+| **User** | `/advisor` | `AIAdvisorPage` | Multi-agent collaborative financial advisory chat with HITL approval |
+| **User** | `/simulator` | `DecisionsPage` | In-memory What-If counterfactual scenario comparison sandbox |
+| **User** | `/imports` | `CSVImportPage` | Bank statement CSV ingestion with 11-rule validation pipeline |
+| **User** | `/notifications` | `NotificationsPage` | Financial notifications, budget alerts, and anomaly indicators |
+| **User** | `/notes` | `NotesPage` | **Node.js + MongoDB Workbench**: Document notes and AI conversation threads |
+| **User** | `/profile` | `ProfilePage` | User profile, monthly fixed commitments, and risk settings |
+| **Admin** | `/admin` | `AdminDashboardPage` | Operational metrics, user management, audit logs, and system health |
 
 ---
 
-## Core System Subsystems
+## 4. Key Financial Modules & Computational Logic
 
-### 1. Multi-Agent Intelligence & Orchestration Subsystem
+### 4.1 Financial Health Score (Deterministic Calculation)
+The Financial Health Score (e.g., `78 / 100`) is calculated using a deterministic algorithm evaluated in real time:
+- **Savings Rate (Max 30 pts):** `(Net Monthly Savings / Net Monthly Income) * 100`. (Savings rate ≥ 25% awards full 30 pts).
+- **Budget Adherence (Max 25 pts):** Deducts points for budgets exceeding 80% warning and 100% threshold limits.
+- **Emergency Fund Buffer (Max 20 pts):** Evaluates `Current Emergency Savings / (Monthly Essential Expenses * 6)`. Full points for 6+ months of runway.
+- **Goal Progression (Max 15 pts):** Average completion percentage of active financial targets.
+- **Spending Anomalies (Max 10 pts):** Deducts points when statistical spending spikes are detected by the Isolation Forest model.
 
-The multi-agent tier coordinates specialized, domain-constrained AI agents through a centralized orchestrator, strictly enforcing the principle of least privilege.
+### 4.2 Emergency Fund Calculator
+- **Formula:** `Target Fund = Essential Monthly Expenses × Target Coverage Months`
+- Default baseline: ₹15,000 monthly essential living expenses × 6 months = ₹90,000 target.
+- Real-time display of current savings, coverage in months (e.g., `8.0 months`), and progress percentage.
 
-```
-                              User Financial Query
-                                       │
-                                       ▼
-                             +-------------------+
-                             |  AI Orchestrator  |
-                             |  (Intent Triage)  |
-                             +-------------------+
-                                       │
-         ┌──────────────────┬──────────┴──────────┬──────────────────┐
-         ▼                  ▼                     ▼                  ▼
-+------------------+ +----------------+ +------------------+ +------------------+
-| TransactionAgent | |  BudgetAgent   | |    GoalAgent     | | InvestmentAgent  |
-| Spending breakdown| | Surplus & cash | | Milestones & run | | Allocation % &   |
-| & anomaly review | | flow forecasts | | rate feasibility | | risk disclosures|
-+------------------+ +----------------+ +------------------+ +------------------+
-         │                  │                     │                  │
-         └──────────────────┼─────────────────────┴──────────────────┘
-                            ▼
-               +--------------------------+
-               |  FinancialDecisionAgent  |
-               | (Multi-Option Synthesis) |
-               +--------------------------+
-                            │
-            ┌───────────────┴───────────────┐
-            │                               │
-    Informational Plan              Mutating Proposal
-    (Read-Only Response)            (Triggers HITL Gate)
-            │                               │
-            ▼                               ▼
-    Render Facts, Trade-Offs,       Create AgentApproval Record
-    Predictions, and Citations      (15-Minute Expiration, Awaiting User)
-```
-
-- **AI Orchestrator**: Executes deterministic intent triage, maps user queries to optimal specialist execution routes, enforces loop boundaries (`MAX_AGENT_STEPS = 8`, `MAX_TOOL_CALLS = 12`, `MAX_AGENT_HANDOFFS = 3`), and generates non-fabricated execution traces.
-- **Transaction Specialist**: Aggregates categorical spending, investigates transaction flags, and drafts reclassification proposals.
-- **Budget Specialist**: Calculates cash flow surpluses, savings rates, projects monthly expense trajectories, and evaluates scenario deltas.
-- **Goal Specialist**: Monitors target accumulation, estimates horizon feasibility, and computes required monthly contribution rates.
-- **Investment Specialist**: Evaluates portfolio distribution and surfaces asset allocation education based on official regulatory frameworks (strictly non-transactional).
-- **Financial Decision Agent**: Synthesizes cross-specialist evidence into structured decision alternatives (Option A, Option B, Option C), surfacing trade-offs, potential drawbacks, and numerical validations against backend facts.
-- **Governed Tool Registry (15 Tools)**:
-  - Strict input and output contracts enforced via Pydantic schemas.
-  - Per-agent allowlists ensuring specialists can only invoke domain-relevant capabilities.
-  - Mandatory tenant injection guaranteeing data isolation across multi-user environments.
-- **Human-in-the-Loop (HITL) Approval Engine**:
-  - Classifies actions into Read-Only (automatic), Simulation (in-memory execution), and Mutating (approval required).
-  - Mutating operations (`propose_transaction_update`, `propose_goal_update`) are staged in a pending state with a 15-minute expiration window.
-  - State changes are committed to the primary ledger only upon explicit user confirmation; rejection leaves records completely untouched.
-- **In-Memory What-If Simulation Sandbox**:
-  - Implements `simulate_financial_scenario` to project adjustments to income, fixed expenditures, or discretionary spending.
-  - Models financial runway, revised savings percentages, and goal milestone shifts without altering persistent database records.
+### 4.3 AI & Machine Learning Pipeline
+1. **Transaction Classifier:** LinearSVC model trained with Scikit-Learn TF-IDF pipeline over Indian financial merchant descriptors (`Swiggy` → *Food & Dining*, `Uber` → *Transport*, `Netflix` → *Entertainment*).
+2. **Expense Forecaster:** Ridge Regression time-series forecaster with lagged features providing next-month expenditure estimates and 90% confidence uncertainty intervals.
+3. **Anomaly Detector:** Unsupervised Isolation Forest (contamination = 0.05) flagging unexpected expenditure spikes without mislabeling legitimate expenses as fraud.
+4. **What-If Simulation Sandbox:** Generates comparative scenarios (e.g., *Option A: Buy outright*, *Option B: Save ₹5,000 extra/mo*, *Option C: Delay 3 months*) computed strictly in-memory without mutating the database.
 
 ---
 
-### 2. Machine Learning & Regulatory RAG Pipeline
+## 5. Node.js & MongoDB Microservice (`node-service/`)
 
-FinMate couples traditional machine learning models for low-latency inference with retrieval-augmented generation for compliance-backed guidance.
+The Node.js service demonstrates full-stack lab competence with Express.js and document databases:
 
-```
-                          Incoming Unstructured Text / Query
-                                          │
-            ┌─────────────────────────────┼─────────────────────────────┐
-            ▼                             ▼                             ▼
-+-----------------------+   +---------------------------+   +-----------------------+
-|  Transaction Classifier|   |  Expense Forecaster       |   |  Regulatory RAG       |
-|                       |   |                           |   |                       |
-| - Architecture:       |   | - Architecture:           |   | - Knowledge Base:     |
-|   LinearSVC + TF-IDF  |   |   Ridge Regression        |   |   RBI, SEBI, FPSB     |
-| - Accuracy: 98.4%     |   | - Features: Strict Lagged |   | - Metric: 93.3% Hit@3 |
-| - Macro F1: 0.9849    |   |   (Zero Data Leakage)     |   | - Latency: 0.95ms     |
-| - Output: 10 Taxonomies|  | - Output: Point + 90% CI  |   | - Cosine Similarity   |
-+-----------------------+   +---------------------------+   +-----------------------+
-```
-
-- **Transaction Classification Model**:
-  - Model: Calibrated Linear Support Vector Classifier (`LinearSVC`) with word-level TF-IDF feature extraction.
-  - Performance: **98.4% Accuracy** and **0.9849 Macro F1-Score** across 10 discrete categories (*Housing, Food & Dining, Transportation, Utilities, Healthcare, Entertainment, Shopping, Personal Care, Education, Investments*).
-  - Inference Latency: Sub-millisecond execution suitable for high-volume streaming imports.
-- **Time-Series Monthly Expense Forecaster**:
-  - Model: `Ridge` Regression trained via `TimeSeriesSplit` cross-validation.
-  - Feature Engineering: Incorporates strictly lagged features (`lag_1`, `lag_2`, `lag_3`, `rolling_avg_3`, `month_num`) to eliminate look-ahead bias.
-  - Accuracy: Holdout Mean Absolute Error (MAE) of **INR 3,369.93**.
-  - Output Structure: Generates expected expenditure together with statistical 90% uncertainty intervals (`lower_bound` to `upper_bound`).
-- **Unsupervised Anomaly Detection**:
-  - Model: `IsolationForest` configured with an empirical contamination factor of 0.05.
-  - Identifies irregular transaction amounts and category-specific expenditure deviations to surface potential billing errors or fraud.
-- **Semantic Vector Regulatory RAG Engine**:
-  - Corpus: Grounded in official regulatory policies including Reserve Bank of India (RBI) emergency reserve directives, Securities and Exchange Board of India (SEBI) risk disclosures, and Financial Planning Standards Board (FPSB) India 50/30/20 guidelines.
-  - Vector Retrieval: Cosine similarity vector search achieving **93.3% Hit Rate @ 3** with an average retrieval latency of **0.95ms**.
-- **LLM Abstraction & Security Guardrails**:
-  - Unified interface (`BaseLLMProvider`) supporting deterministic zero-cost testing (`MockLLMProvider`), OpenAI models (`OpenAILLMProvider`), and Google Gemini (`GeminiLLMProvider`).
-  - Integrated prompt injection detection filter (`detect_prompt_injection`) that flags adversarial injection attempts before orchestration execution.
+- **Directory:** `node-service/`
+- **Port:** `5000`
+- **Endpoints:**
+  - `GET /api/health` — Microservice status and MongoDB connection state.
+  - `GET /api/notes` — Retrieve user's financial notes with search and pin filters.
+  - `POST /api/notes` — Create financial note with title, content, tags, and pinned flag.
+  - `GET /api/notes/:id` — Retrieve note by ID (user ownership verified).
+  - `PUT /api/notes/:id` — Update note content and tags.
+  - `DELETE /api/notes/:id` — Delete note document.
+  - `GET /api/conversations` — Retrieve AI advisor conversation threads.
+  - `POST /api/conversations` — Create new conversation thread.
+  - `POST /api/conversations/:id/messages` — Append user or assistant messages to conversation thread.
+  - `DELETE /api/conversations/:id` — Delete conversation thread.
+- **Resilience Architecture:** If a local MongoDB instance is offline, the microservice automatically falls back to an embedded JSON document store (`data/fallback_notes.json`), ensuring zero crashes during live lab demonstrations and viva examinations.
 
 ---
 
-### 3. Deterministic Financial Domain & Calculation Engine
+## 6. Seed Data & Demo Accounts
 
-To prevent hallucinated financial calculations, all numerical computations are strictly decoupled from Large Language Models and delegated to a dedicated mathematical engine.
+FinMate 2.0 includes a production-grade automated seeding script (`backend/app/scripts/seed_demo_data.py`) pre-loaded with realistic financial profiles:
 
-- **Monetary Precision**: Engineered with Python's native `Decimal` module and explicit rounding (`ROUND_HALF_UP`) matching relational `NUMERIC(15, 2)` columns, eliminating IEEE 754 floating-point errors.
-- **Authoritative Calculations**:
-  - Net monthly surplus: `Surplus = Monthly Income - (Fixed Expenses + Discretionary Outflows)`
-  - True savings rate: `Savings Rate = (Savings Contributions / Total Inflows) * 100`
-  - Milestone velocity: Exact remaining horizon calculation and required monthly saving:
-    $$\text{Required Monthly Saving} = \frac{\text{Target Amount} - \text{Current Amount}}{\text{Remaining Months}}$$
-- **Financial Decision Engine & What-If Simulation Sandbox**:
-  - Dynamically synthesizes real-world decisions (`purchase`, `savings`, `expense_change`, `goal_contribution`, `debt_payment`, `investment`, `subscription`, `income_change`, `custom`).
-  - Computes baseline financial state (income, fixed expenses, discretionary expenses, monthly surplus, liquid savings, safety buffer months).
-  - Generates 3 deterministic counterfactual pathways (e.g. *Option A: Immediate Action*, *Option B: Deferred / Staggered Window*, *Option C: Reallocated Discretionary Outflows*).
-  - Evaluates milestone goal timeline impacts, shifts in buffer months, and required rate adjustments.
-  - Generates transparent, verifiable assumptions and trade-off considerations.
-- **Rule of Separation**: Language models are restricted to textual narration and contextual explanation; all monetary statistics provided to the user are derived from backend calculation outputs.
+### Pre-Configured Credentials
 
----
+| Role | Email | Password | Access Scope |
+| :--- | :--- | :--- | :--- |
+| **USER** | `demo@finmate.local` | `demo123` | Full financial management suite, AI advisor, What-If simulator |
+| **ADMIN** | `admin@finmate.local` | `admin123` | Administrative workspace, user role management, system audit logs |
 
-### 4. Data Engineering, Ingestion & Quality Engine
-
-FinMate incorporates an end-to-end data processing pipeline capable of handling heterogeneous financial records while enforcing structural integrity.
-
-- **Multi-Stage Ingestion Pipeline**:
-  - `CSVParser`: Automatic detection of delimiters (comma, semicolon, tab, pipe) and file encodings (UTF-8, Latin-1, CP1252).
-  - `DataNormalizer`: Normalizes varying date structures (`YYYY-MM-DD`, `DD/MM/YYYY`, `MM/DD/YYYY`), extracts numeric amounts across differing credit/debit column conventions, and removes foreign currency symbols.
-- **11-Rule Deterministic Quality Engine**:
-  - Evaluates every row against comprehensive rules categorized by severity:
-    - `ERROR`: Rejects rows with unparseable dates, negative expense amounts, missing mandatory identifiers, or invalid categories.
-    - `WARNING`: Flags statistical anomalies, potential duplicates, or unassigned classifications.
-    - `INFO`: Highlights data enrichment events and format conversions.
-- **Duplicate Prevention & Lineage Tracking**:
-  - Sliding-window heuristic matching `user_id + transaction_date + amount + normalized_description`.
-  - Full audit lineage recorded on each transaction: `source_type`, `source_reference`, `import_id`, and `data_quality_flags`.
-  - Batch import tracking captured in dedicated `import_records` tables with pre-commit preview capabilities.
+### Seeded Financial Baseline
+- **Income:** ₹60,000 / month (Primary Tech Consulting) + ₹15,000 (Freelance)
+- **Transactions:** 12 canonical transactions across Food, Shopping, Transport, Utilities, Entertainment, and Education.
+- **Budgets:** Food (₹8,000), Shopping (₹5,000), Transport (₹3,000), Entertainment (₹2,500), Utilities (₹4,000), Healthcare (₹3,000).
+- **Goals:** High-Performance Laptop (₹80,000), Emergency Safety Reserve (₹1,50,000), Japan Travel Fund (₹1,20,000).
+- **Investments:** Nifty 50 Index Fund (₹85,000), Sovereign Gold Bond (₹42,000), Liquid Emergency Debt Fund (₹1,20,000).
+- **Subscriptions:** Netflix Premium (₹649/mo), Spotify Family (₹179/mo), GitHub Copilot (₹820/mo), AWS Cloud Hosting (₹1,450/mo).
 
 ---
 
-### 5. Native Android SMS Ingestion Subsystem (`FinMateSMS`)
+## 7. Step-by-Step Lab Demonstration Guide
 
-The Android client provides passive, privacy-preserving transaction tracking by parsing authorized bank SMS alerts directly on-device.
-
-```
-+-------------------------------------------------------------------------------+
-|                        Android Client (FinMateSMS)                            |
-|                                                                               |
-|   Incoming Bank SMS                                                           |
-|        │                                                                      |
-|        ▼                                                                      |
-|   [SmsReceiver] ──────► Sender in Allowed Whitelist? (HDFCBK, SBIINB, etc.)   |
-|        │                       │                                              |
-|        │                       └─► NO: Immediate Discard                      |
-|        ▼                                                                      |
-|   [Security Filter] ──► Contains OTP / Secret PIN? ──► YES: Immediate Discard |
-|        │                                                                      |
-|        ▼                                                                      |
-|   [SmsTransactionParser] (Local Deterministic Regex)                          |
-|        │ Extracts: Amount (>0), Date, Type (Debit/Credit), SHA-256 Hash      |
-|        ▼                                                                      |
-|   [Room Database] ─────► Inserts PendingTransaction (Unique Hash Index)       |
-|        │                                                                      |
-|        ▼                                                                      |
-|   [SyncWorker] (WorkManager with NetworkType.CONNECTED Constraint)            |
-+--------│----------------------------------------------------------------------+
-         │ HTTP POST /api/v1/transactions/from-sms (JSON)
-         ▼
-+-------------------------------------------------------------------------------+
-|                            FinMate Backend API                                |
-|                                                                               |
-|   1. Payload Schema & Numerical Validation                                    |
-|   2. Duplicate Verification (source_type="sms" AND source_reference=sms_hash) |
-|   3. Atomic Ledger Insertion (HTTP 201 Created)                               |
-|   4. Idempotent Conflict Return (HTTP 409 Conflict)                           |
-+-------------------------------------------------------------------------------+
-```
-
-- **Technical Stack**: Kotlin 1.9+, AndroidX Room 2.6.1, AndroidX WorkManager 2.9.0, Retrofit 2.11.0, OkHttp 4.12.0, Material Design 3.
-- **Privacy & Security Guarantees**:
-  - Zero Raw SMS Transmission: Message body is parsed locally; raw SMS text is never transmitted over the network.
-  - OTP & PIN Filtering: Incoming messages matching one-time passcodes or two-factor security patterns are discarded instantly.
-  - Sender Whitelisting: Strict filtering restricted to verified financial institution sender IDs.
-- **Dual-Layer Duplicate Protection**:
-  - Device Layer: SQLite unique constraint on `sms_hash` prevents duplicate insertions in local Room queue.
-  - Server Layer: Query-level verification against `source_reference = sms_hash`. If already recorded, backend returns `HTTP 409 Conflict`, which the Android client marks as synced to prevent retry loops.
-
----
-
-### 6. Modern Web Interaction Hub
-
-The frontend workspace is built as a single-page application focused on data visualization, agent interaction, and decision governance.
-
-- **Stack**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide Icons, Recharts.
-- **Core Views**:
-  - **AI Advisor Hub**: Unified multi-agent console with live step-by-step execution traces, latency metrics, partitioned decision support cards (Facts, Forecasts, Trade-offs, Regulatory Citations), and interactive What-If simulation controls.
-  - **Human-in-the-Loop Review**: Visual diff cards displaying current ledger values alongside agent-proposed updates with one-click Approve and Reject actions.
-  - **Financial Dashboard**: Real-time KPI summaries (monthly surplus, cumulative savings, goal burn-down, asset distribution) rendered via responsive Recharts visualizations.
-  - **CSV Ingestion Wizard**: File upload workspace with delimiter sniffing, row-by-row syntax validation, and pre-commit preview.
-  - **Transactions Ledger**: Searchable, filterable ledger with category badges, data quality warning indicators, and lineage metadata.
-  - **Goals & Portfolio Views**: Milestone tracking with time-horizon projections and asset class allocation breakdowns.
-
----
-
-## Technical Stack Matrix
-
-| Domain | Technology / Library | Role in System |
+| Demo ID | Action Flow | Technical Validation |
 | :--- | :--- | :--- |
-| Backend Runtime | Python 3.11+ / FastAPI | Asynchronous REST API service and routing |
-| Validation & Settings | Pydantic v2 / Pydantic-Settings | Request/response schema validation and environment configuration |
-| Database & ORM | SQLAlchemy 2.0 / Alembic | Relational data mapping, connection pooling, declarative migrations |
-| Primary Database | PostgreSQL 16 (Docker) | Production transactional database |
-| Embedded Database | SQLite 3 (`finmate.db`) | Zero-configuration local database with automatic connection fallback |
-| Numerical Math | Python `decimal.Decimal` | Exact monetary calculations with `ROUND_HALF_UP` precision |
-| Machine Learning | Scikit-Learn / NumPy / SciPy | LinearSVC classifier, Ridge forecaster, Isolation Forest detector |
-| RAG & Embeddings | Scikit-Learn TF-IDF / Cosine Metric | Vector indexing and retrieval over regulatory financial corpus |
-| Agent Orchestration | Custom Multi-Agent Runtime | Intent triage, DAG routing, tool execution boundaries, trace logging |
-| Frontend Framework | React 19 / TypeScript / Vite | Single-page client web application |
-| Styling & UI | Tailwind CSS v4 / Lucide React | Modern responsive interface design and icon system |
-| Data Visualization | Recharts | Interactive financial analytics charts and forecast bands |
-| Mobile Platform | Kotlin 1.9+ / Android SDK (API 24-34) | Native background SMS ingestion client (`FinMateSMS`) |
-| Mobile Persistence | AndroidX Room 2.6.1 | Local offline transaction queue with unique hash constraints |
-| Mobile Background | AndroidX WorkManager 2.9.0 | Guaranteed network-constrained synchronization tasks |
-| Mobile Networking | Retrofit 2.11.0 / OkHttp 4.12.0 | Type-safe REST client for backend ledger synchronization |
-| Testing Framework | Pytest / Pytest-Asyncio / HTTPX | Comprehensive asynchronous unit and integration test runners |
-| Containerization | Docker / Docker Compose | Multi-service orchestration for backend and database |
+| **DEMO 1** | Register → Login → Dashboard | `POST /api/v1/auth/login` → JWT generated → redirected to `/dashboard` with header user pill. |
+| **DEMO 2** | Create Expense → API → Database | Add transaction on `/transactions` → `POST /api/v1/transactions` → instant ledger and health score update. |
+| **DEMO 3** | Edit Expense → API → Database | Click Edit on transaction row → modal opens with existing data → `PUT /api/v1/transactions/:id`. |
+| **DEMO 4** | Delete Expense → API → Database | Click Delete → confirmation modal → `DELETE /api/v1/transactions/:id` → removed from state. |
+| **DEMO 5** | Create Budget → Spending Progress | Add budget on `/budgets` → category spending tracked against limit with 80% / 100% alert badges. |
+| **DEMO 6** | Create Goal → Progress Calculation | Create goal on `/goals` → monthly required savings calculated to target date. |
+| **DEMO 7** | Upload CSV → Validation → Preview → Commit | Ingest bank statement on `/imports` → 11 data quality rules evaluate errors/warnings → preview table → batch commit. |
+| **DEMO 8** | ML Transaction Classification | Type "Swiggy order" on `/expenses` → LinearSVC model predicts *Food & Dining* automatically. |
+| **DEMO 9** | Spend Anomaly Detection | Add unusual ₹45,000 transaction → Isolation Forest flags spending anomaly with warning indicator. |
+| **DEMO 10** | Ask AI Advisor | Ask question on `/advisor` → Multi-agent orchestrator synthesizes guidance with RAG citation. |
+| **DEMO 11** | Run What-If Simulation | On `/simulator`, simulate ₹40,000 purchase → in-memory sandbox generates Option A, B, and C with surplus impact. |
+| **DEMO 12** | Create Note → Node.js → MongoDB | On `/notes`, create financial note → `POST /api/notes` → saved to MongoDB / document store. |
+| **DEMO 13** | Edit & Delete Document | Edit note title, pin note, or delete on `/notes` → real-time Node.js microservice update. |
+| **DEMO 14** | Admin Login → Admin Dashboard | Log in as `admin@finmate.local` → `/admin` workspace opens with user role toggle buttons and audit log events. |
+| **DEMO 15** | Responsive Mobile UI | Resize viewport to mobile width → collapsible navigation, stacked cards, and touch-friendly controls. |
 
 ---
 
-## REST API Reference
-
-The FastAPI gateway exposes modular, versioned endpoints under `/api/v1`:
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/v1/agent/tasks` | Submits a query or financial scenario to the multi-agent orchestrator |
-| `GET` | `/api/v1/agent/tasks/{task_id}` | Retrieves execution trace, facts, predictions, and status of an agent task |
-| `POST` | `/api/v1/agent/approvals/{approval_id}/approve` | Approves a pending state mutation and commits updates to the database |
-| `POST` | `/api/v1/agent/approvals/{approval_id}/reject` | Rejects a pending state mutation without modifying stored records |
-| `POST` | `/api/v1/ai/classify-transaction` | Classifies transaction description via the LinearSVC machine learning model |
-| `POST` | `/api/v1/ai/forecast-expenses` | Returns 30-day expense forecast with 90% statistical uncertainty intervals |
-| `POST` | `/api/v1/ai/detect-anomalies` | Evaluates transaction batches for spending outliers using Isolation Forest |
-| `POST` | `/api/v1/ai/rag/query` | Executes semantic vector search over the regulatory compliance knowledge base |
-| `POST` | `/api/v1/transactions/from-sms` | Ingests parsed Android SMS transaction with hash-based duplicate prevention |
-| `GET` | `/api/v1/transactions/` | Lists user transactions with filtering, pagination, and category breakdowns |
-| `POST` | `/api/v1/imports/preview` | Generates pre-commit validation preview and quality audit for uploaded CSVs |
-| `POST` | `/api/v1/imports/commit` | Commits verified CSV import batch into database with lineage records |
-| `GET` | `/api/v1/goals/` | Fetches milestone goals and computes progress metrics |
-| `GET` | `/api/v1/investments/` | Retrieves investment portfolio holdings and asset allocation breakdown |
-| `GET` | `/api/v1/profile/` | Fetches user profile, monthly income, fixed expenses, and risk preferences |
-| `POST` | `/api/v1/decisions/simulate` | Deterministic what-if simulation with 3 scenario pathways & goal impact |
-| `POST` | `/api/v1/decisions/compare` | Side-by-side scenario comparison matrix for immediate savings, buffer, goals |
-| `GET` | `/api/v1/decisions/` | Lists user's decision simulation history |
-| `GET` | `/api/v1/decisions/{id}` | Retrieves detailed decision simulation record |
-| `DELETE` | `/api/v1/decisions/{id}` | Deletes decision simulation record from history |
-| `GET` | `/health` | System health check reporting database connectivity and runtime status |
-
----
-
-## Verification, Testing & Benchmark Results
-
-FinMate maintains an automated test and validation harness across the full application stack:
-
-### Automated Test Suite (102 / 102 Passed)
-
-```
-tests/integration/test_agent_api.py            [PASS]  (6 tests)
-tests/integration/test_ai_api.py               [PASS]  (7 tests)
-tests/integration/test_data_quality_api.py     [PASS]  (1 test)
-tests/integration/test_decisions_api.py        [PASS]  (4 tests)
-tests/integration/test_goals_api.py            [PASS]  (1 test)
-tests/integration/test_health_api.py           [PASS]  (1 test)
-tests/integration/test_imports_api.py          [PASS]  (4 tests)
-tests/integration/test_profile_api.py          [PASS]  (1 test)
-tests/integration/test_sms_transaction_api.py  [PASS]  (4 tests)
-tests/integration/test_transactions_api.py     [PASS]  (1 test)
-tests/unit/test_agent_evaluation.py            [PASS]  (1 test)
-tests/unit/test_anomaly_detector.py            [PASS]  (2 tests)
-tests/unit/test_approval_engine.py             [PASS]  (3 tests)
-tests/unit/test_calculations.py                [PASS]  (9 tests)
-tests/unit/test_classifier.py                  [PASS]  (3 tests)
-tests/unit/test_csv_parser.py                  [PASS]  (5 tests)
-tests/unit/test_data_quality_rules.py          [PASS]  (5 tests)
-tests/unit/test_decision_engine.py             [PASS]  (6 tests)
-tests/unit/test_forecaster.py                  [PASS]  (4 tests)
-tests/unit/test_llm_and_guardrails.py          [PASS]  (5 tests)
-tests/unit/test_nlp_preprocessor.py            [PASS]  (5 tests)
-tests/unit/test_normalizer.py                  [PASS]  (5 tests)
-tests/unit/test_orchestrator.py                [PASS]  (6 tests)
-tests/unit/test_rag_pipeline.py                [PASS]  (4 tests)
-tests/unit/test_schemas.py                     [PASS]  (4 tests)
-tests/unit/test_tool_registry.py               [PASS]  (5 tests)
------------------------------------------------------------------
-Total: 102 passed (100% Pass Rate)
-```
-
-### Agent Benchmark Matrix (12 / 12 Passed)
-
-The multi-agent system is benchmarked against 12 standardized financial intent scenarios covering single-agent lookups, cross-specialist deliberations, approval gating, and security defense:
-
-- Benchmark Success Rate: **12 / 12 (100.0%)**
-- Zero-Hallucination Invariant: All numerical values verified against backend database records.
-- Prompt Injection Defense: Adversarial queries intercepted and rejected with `SECURITY_VIOLATION` status without tool execution.
-
-### Production Frontend Build
-
-- Validation Command: `npm run build` (`tsc -b && vite build`)
-- Outcome: **0 Errors, 0 Warnings** across 1,892 transformed modules.
-
----
-
-## Getting Started & Local Execution
+## 8. Local Setup & Execution Instructions
 
 ### Prerequisites
+- Python 3.11+
+- Node.js v20+ and npm
+- Git
 
-- Python 3.11 or higher (`uv` package manager recommended)
-- Node.js 20 or higher and npm
-- Docker and Docker Compose (optional for containerized deployment)
-- Android Studio Iguana+ / Android SDK 34 (optional for building Android client)
-
-### 1. Repository Setup
-
-```powershell
-git clone https://github.com/nithishvenkat4/FinMate.git
-cd FinMate
-```
-
-### 2. Environment Configuration
-
-```powershell
-cp .env.example .env
-```
-
-Ensure `.env` contains valid runtime settings. The application defaults to local SQLite if PostgreSQL credentials are not provided.
-
-### 3. Database Initialization & Demo Seeding
-
-Provision the standard demonstration environment (Demo User, INR 60,000 monthly income, recurring expenses, milestone goals, and investment assets):
-
-```powershell
-python scripts/seed_demo_data.py
-```
-
-### 4. Running Backend API Server
-
-```powershell
+### 1. Backend Service (FastAPI)
+```bash
 cd backend
-uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+python -m uvicorn app.main:app --port 8000 --reload
 ```
+The FastAPI documentation (Swagger UI) is available at: **`http://localhost:8000/docs`**
 
-- Interactive Swagger Documentation: `http://localhost:8000/docs`
-- Service Health Check: `http://localhost:8000/health`
+### 2. Document Microservice (Node.js + MongoDB)
+```bash
+cd node-service
+npm install
+node server.js
+```
+The Node.js service runs on: **`http://localhost:5000`**
 
-### 5. Running Frontend Web Workspace
-
-```powershell
+### 3. Frontend Application (React 19 + Vite)
+```bash
 cd frontend
 npm install
 npm run dev
 ```
-
-- Web Application Interface: `http://localhost:5173`
-
-### 6. Executing Test Suites
-
-```powershell
-cd backend
-uv run pytest -v
-```
-
-### 7. Running with Docker Compose
-
-To deploy the backend API and PostgreSQL database containers:
-
-```powershell
-docker compose up -d --build
-```
+The web application runs on: **`http://localhost:5173`** (or next available port).
 
 ---
 
-## Repository Directory Structure
+## 9. Automated Testing & Verification Results
 
+All unit and integration test suites pass with **100% success rate**:
+
+### Python Backend Test Suite (Pytest)
+```bash
+pytest backend/tests -v
 ```
-FinMate/
-├── android/
-│   └── FinMateSMS/              # Native Android background SMS tracking application
-│       ├── app/src/main/java/   # Kotlin source (SmsReceiver, Room DB, WorkManager sync)
-│       └── build.gradle.kts     # Android build configuration
-├── backend/
-│   ├── app/
-│   │   ├── ai/                  # AI subsystem (Agents, Orchestrator, Tools, ML models, RAG)
-│   │   ├── api/v1/              # FastAPI route controllers and endpoint handlers
-│   │   ├── core/                # Configuration, logging, and security definitions
-│   │   ├── db/                  # Database session management and base models
-│   │   ├── models/              # SQLAlchemy relational entity definitions
-│   │   ├── repositories/        # Data access layer implementing repository pattern
-│   │   ├── schemas/             # Pydantic v2 request/response schemas
-│   │   └── services/            # Domain logic (Calculations, Normalizer, Quality Engine)
-│   ├── tests/                   # Pytest automated test suite (Unit and Integration)
-│   └── pyproject.toml           # Backend project dependencies and packaging specifications
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # Reusable UI components (Diff cards, Execution traces)
-│   │   ├── pages/               # Top-level view containers (AIAdvisor, Dashboard, etc.)
-│   │   ├── services/            # Typed API client services
-│   │   └── types/               # TypeScript domain interfaces
-│   ├── package.json             # Frontend dependencies (React 19, Tailwind CSS, Recharts)
-│   └── vite.config.ts           # Vite build and development configuration
-├── docs/                        # Technical specifications, architecture docs, and reports
-├── scripts/                     # Database seeding and utility scripts
-├── compose.yaml                 # Docker Compose multi-service deployment definition
-└── README.md                    # System documentation and technical overview
+- **Result:** **126 / 126 tests passed (100%)**
+- **Coverage:** Auth & RBAC endpoints, budget calculations, income CRUD, subscriptions & recurring commitments, notifications lifecycle, admin statistics, data export (CSV/JSON), ML LinearSVC classifier, Isolation Forest anomaly detector, Ridge forecaster, Multi-agent orchestrator, and What-If sandbox.
+
+### Node.js Microservice Test Suite
+```bash
+cd node-service
+node test.js
 ```
+- **Result:** **8 / 8 tests passed (100%)**
+- **Coverage:** Service health check, note creation, note listing, note update, note deletion, conversation thread creation, message appending, and conversation deletion.
+
+### Frontend Production Build (Vite + TypeScript)
+```bash
+cd frontend
+npm run build
+```
+- **Result:** `tsc -b && vite build` completed with **0 errors**.
 
 ---
 
-## License
+## 10. Docker Deployment (Optional Multi-Container Stack)
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for complete details.
+FinMate 2.0 supports one-command deployment via Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Services initialized:
+- `finmate_db`: PostgreSQL 16 Alpine (`5432`)
+- `finmate_mongodb`: MongoDB 7.0 Jammy (`27017`)
+- `finmate_node_api`: Node.js Express REST API (`5000`)
+- `finmate_backend`: FastAPI Core Financial Engine (`8000`)
+- `finmate_frontend`: Nginx / React 19 Production Bundle (`3000`)
+
+---
+
+## 11. Security, Data Privacy & Governance
+
+- **Password Hashing:** PBKDF2 with HMAC-SHA256 and unique salt per user.
+- **JWT Authentication:** Cryptographically signed tokens with expiration checks.
+- **Role-Based Access Control (RBAC):** Gated routes ensuring regular users cannot access administrative endpoints or other users' private financial data.
+- **Input Validation:** Strict Pydantic v2 schemas on Python backend and parameter validation on Node.js microservice.
+- **Privacy-First Android Ingestion:** On-device SMS processing with zero raw message telemetry uploaded to remote servers.
+- **Mathematical Integrity:** Currency arithmetic uses Python `Decimal` with `ROUND_HALF_UP` to prevent floating-point drift.

@@ -1,0 +1,19 @@
+{
+  "name": "finmate-node-service",
+  "version": "1.0.0",
+  "description": "FinMate Node.js + Express + MongoDB Document Microservice",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5"
+  }
+}

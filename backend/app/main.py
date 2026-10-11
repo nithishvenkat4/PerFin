@@ -34,6 +34,20 @@ async def lifespan(app: FastAPI):
     try:
         Base.metadata.create_all(bind=engine)
         logger.info("Database schema tables verified/created.")
+        # Ensure new columns on existing SQLite/Postgres tables
+        try:
+            from sqlalchemy import inspect, text
+            with engine.connect() as conn:
+                inspector = inspect(engine)
+                cols = [c["name"] for c in inspector.get_columns("users")]
+                if "password_hash" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+                if "role" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'USER'"))
+                conn.commit()
+        except Exception as mig_err:
+            logger.debug("Column migration notice: %s", mig_err)
+
         seed_demo_data()
         logger.info("Demo dataset verified/seeded.")
     except Exception as exc:
@@ -50,7 +64,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="FinMate — Personal Financial Decision Agent Backend API",
+    description="PerFin — Personal Financial Decision Agent Backend API",
     version=settings.APP_VERSION,
     lifespan=lifespan,
     docs_url="/docs",

@@ -7,6 +7,7 @@ export interface Transaction {
   amount: string | number;
   transaction_type: 'income' | 'expense';
   category: string;
+  payment_method?: string;
   notes?: string;
   source_type: 'manual' | 'csv_import' | 'synthetic';
   source_reference?: string;
@@ -33,7 +34,7 @@ export interface Goal {
   current_amount: string | number;
   target_date: string;
   priority: 'low' | 'medium' | 'high';
-  progress_percentage: string | number;
+  progress_percentage?: string | number;
   created_at: string;
   updated_at: string;
 }
@@ -440,4 +441,169 @@ export interface DecisionDetailResponse {
   updated_at: string;
 }
 
+// FinMate 2.0 Types: Auth & RBAC
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'USER' | 'ADMIN';
+}
 
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  user_id: string;
+  name: string;
+  email: string;
+  role: 'USER' | 'ADMIN';
+}
+
+// FinMate 2.0 Types: Budgets
+export interface Budget {
+  id: string;
+  user_id: string;
+  category: string;
+  amount: number | string;
+  period: string;
+  alert_threshold: number;
+  spent: number | string;
+  remaining: number | string;
+  percentage_used: number;
+  status: 'normal' | 'warning' | 'exceeded';
+  created_at: string;
+  updated_at: string;
+}
+
+// FinMate 2.0 Types: Income
+export interface Income {
+  id: string;
+  user_id: string;
+  source: string;
+  amount: number | string;
+  date: string;
+  frequency: string;
+  description?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// FinMate 2.0 Types: Subscriptions
+export interface Subscription {
+  id: string;
+  user_id: string;
+  name: string;
+  provider: string;
+  amount: number | string;
+  billing_frequency: 'Monthly' | 'Yearly';
+  next_billing_date: string;
+  category: string;
+  status: 'Active' | 'Paused' | 'Cancelled';
+  monthly_equivalent: number | string;
+  created_at: string;
+  updated_at: string;
+}
+
+// FinMate 2.0 Types: Recurring Payments
+export interface RecurringPayment {
+  id: string;
+  user_id: string;
+  name: string;
+  amount: number | string;
+  frequency: 'Weekly' | 'Monthly' | 'Quarterly' | 'Yearly';
+  category: string;
+  start_date: string;
+  next_due_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// FinMate 2.0 Types: Notifications
+export interface NotificationItem {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  is_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// FinMate 2.0 Types: Admin Workspace
+export interface AdminStats {
+  total_users: number;
+  active_users: number;
+  total_transactions: number;
+  total_goals: number;
+  total_investments: number;
+  total_imports: number;
+  total_budgets?: number;
+  total_subscriptions?: number;
+  total_transaction_volume: number | string;
+  system_status: string;
+}
+
+export interface AdminUserItem {
+  id: string;
+  name: string;
+  email: string;
+  role: 'USER' | 'ADMIN';
+  created_at: string;
+  transaction_count: number;
+  goal_count?: number;
+  total_spent: number | string;
+}
+
+export interface AuditLogItem {
+  id: string;
+  user_id?: string | null;
+  user_email?: string | null;
+  action: string;
+  resource: string;
+  entity_type?: string;
+  details?: string | null;
+  ip_address?: string | null;
+  timestamp?: string;
+  created_at: string;
+}
+
+export interface SystemHealth {
+  status: string;
+  app_version: string;
+  database_type: string;
+  database_connected: boolean;
+  ai_provider: string;
+  environment: string;
+  uptime_seconds: number;
+}
+
+// FinMate 2.0 Types: Node.js + MongoDB Document Storage
+export interface NoteItem {
+  _id?: string;
+  id?: string;
+  userId: string;
+  title: string;
+  content: string;
+  tags?: string[];
+  pinned?: boolean;
+  color?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ConversationMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp?: string;
+}
+
+export interface ConversationItem {
+  _id?: string;
+  id?: string;
+  userId: string;
+  conversationId: string;
+  title: string;
+  messages: ConversationMessage[];
+  createdAt: string;
+  updatedAt: string;
+}

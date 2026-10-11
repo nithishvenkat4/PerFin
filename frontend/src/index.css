@@ -2,64 +2,263 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Plus Jakarta Sans', 'Outfit', var(--font-sans);
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    /* Eduvance Purple & Amber Color System */
+    --color-primary: #5E4AE3;
+    --color-primary-hover: #4D38D0;
+    --color-primary-light: #F4F1FD;
+    --color-accent-amber: #FACC15;
+    --color-accent-amber-hover: #EAB308;
+    --color-accent-amber-light: #FEF9C3;
+    --color-surface-bg: #F8F9FD;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: #F8F9FD;
+    color: #0F172A;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  ::selection {
-    background-color: #ccfbf1;
-    color: #0f766e;
+    min-height: 100vh;
   }
 }
 
-/* Custom subtle light scrollbars */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #F1F3F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #94A3B8;
 }
 
-/* Smooth micro-animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Eduvance Design System Utility Classes */
+.font-mono-tech {
+  font-family: var(--font-mono);
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.2s ease-out forwards;
+.font-heading-tech {
+  font-family: var(--font-heading);
 }
 
-/* Subtle card hover utility */
-.hover-lift {
-  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+/* Modern Card Surfaces */
+.eduvance-card {
+  background-color: #FFFFFF;
+  border-radius: 1rem;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(94, 74, 227, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hover-lift:hover {
+.eduvance-card:hover {
+  box-shadow: 0 10px 25px -4px rgba(94, 74, 227, 0.07), 0 4px 8px -2px rgba(0, 0, 0, 0.03);
+  border-color: rgba(196, 181, 253, 0.6);
+}
+
+/* Featured / Hero Purple Card (Like Starter Plan in Eduvance template) */
+.eduvance-hero-card {
+  background: linear-gradient(135deg, #5E4AE3 0%, #4D38D0 100%);
+  color: #FFFFFF;
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 30px -4px rgba(94, 74, 227, 0.3);
+}
+
+/* Pill Badges matching Eduvance template */
+.eduvance-pill-amber {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: #FEF9C3;
+  color: #854D0E;
+  border: 1px solid rgba(253, 224, 71, 0.5);
+}
+
+.eduvance-pill-purple {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: #EDE9FE;
+  color: #5B21B6;
+  border: 1px solid rgba(196, 181, 253, 0.5);
+}
+
+.eduvance-pill-slate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #F1F5F9;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+}
+
+/* Interactive Buttons */
+.eduvance-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #5E4AE3;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  box-shadow: 0 4px 14px 0 rgba(94, 74, 227, 0.25);
+  transition: all 0.15s ease-in-out;
+}
+
+.eduvance-btn-primary:hover {
+  background-color: #4D38D0;
+  box-shadow: 0 6px 20px 0 rgba(94, 74, 227, 0.35);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
 }
+
+.eduvance-btn-primary:active {
+  transform: translateY(0);
+}
+
+.eduvance-btn-amber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #FACC15;
+  color: #1E1B4B;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 0.625rem 1.25rem;
+  box-shadow: 0 4px 14px 0 rgba(250, 204, 21, 0.25);
+  transition: all 0.15s ease-in-out;
+}
+
+.eduvance-btn-amber:hover {
+  background-color: #EAB308;
+  box-shadow: 0 6px 20px 0 rgba(250, 204, 21, 0.35);
+  transform: translateY(-1px);
+}
+
+.eduvance-btn-amber:active {
+  transform: translateY(0);
+}
+
+/* Backwards Compatibility Mappings for Existing Components */
+.neo-box {
+  background-color: #FFFFFF;
+  border-radius: 1rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 16px -2px rgba(94, 74, 227, 0.05);
+}
+
+.neo-box-flat {
+  background-color: #FFFFFF;
+  border-radius: 0.875rem;
+  border: 1px solid #E2E8F0;
+}
+
+.neo-box-dark {
+  background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%);
+  color: #FFFFFF;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px -2px rgba(15, 23, 42, 0.2);
+}
+
+.neo-button-lime {
+  background-color: #FACC15;
+  color: #1E1B4B;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  border: 1px solid #EAB308;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 8px 0 rgba(250, 204, 21, 0.2);
+  transition: all 0.15s ease;
+}
+
+.neo-button-lime:hover {
+  background-color: #EAB308;
+  transform: translateY(-1px);
+}
+
+.neo-button-white {
+  background-color: #FFFFFF;
+  color: #1E1B4B;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  border: 1px solid #E2E8F0;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+
+.neo-button-white:hover {
+  background-color: #F8FAFC;
+  border-color: #CBD5E1;
+  transform: translateY(-1px);
+}
+
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px !important;
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid #E2E8F0 !important;
+  background-color: #F1F5F9;
+  color: #334155;
+}
+
+/* Global Softening for all components to match Eduvance template */
+.border-2.border-black {
+  border-width: 1px !important;
+  border-color: rgba(226, 232, 240, 0.85) !important;
+  border-radius: 1rem !important;
+}
+
+.border-b-2.border-black {
+  border-bottom-width: 1px !important;
+  border-bottom-color: rgba(226, 232, 240, 0.85) !important;
+}
+
+.border-black {
+  border-color: rgba(226, 232, 240, 0.85) !important;
+}
+
+.shadow-\[2px_2px_0px_\#000\],
+.shadow-\[3px_3px_0px_\#000\],
+.shadow-\[4px_4px_0px_\#000\],
+.shadow-\[6px_6px_0px_\#000\] {
+  box-shadow: 0 4px 18px -2px rgba(94, 74, 227, 0.05) !important;
+}
+
+.bg-\[\#D4FF00\] {
+  background-color: #FACC15 !important;
+  color: #1E1B4B !important;
+  border-color: #FACC15 !important;
+}
+

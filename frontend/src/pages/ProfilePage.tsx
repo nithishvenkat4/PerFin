@@ -5,11 +5,11 @@ import { api } from '../services/api';
 import { FinancialProfile } from '../types';
 
 interface ProfilePageProps {
-  refreshKey: number;
-  onRefresh: () => void;
+  refreshKey?: number;
+  onRefresh?: () => void;
 }
 
-export const ProfilePage: React.FC<ProfilePageProps> = ({ refreshKey, onRefresh }) => {
+export const ProfilePage: React.FC<ProfilePageProps> = ({ refreshKey = 0, onRefresh = () => {} }) => {
   const [, setProfile] = useState<FinancialProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({

@@ -1,104 +1,161 @@
+/**
+ * Top Navigation Header matching the Technical Cyber-Brutalist Aesthetic.
+ * Visual source of truth: Screenshot 1 & 3.
+ */
+
 import React from 'react';
-import { Menu, RefreshCw, Search, Sparkles, User } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { ArrowRight, LogIn, LogOut, RefreshCw, Shield, User } from 'lucide-react';
 
 interface HeaderProps {
   onRefresh?: () => void;
   isRefreshing?: boolean;
-  onToggleMobileSidebar?: () => void;
-  onNavigateTab?: (tab: any) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  onRefresh,
-  isRefreshing,
-  onToggleMobileSidebar,
-  onNavigateTab,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ onRefresh, isRefreshing }) => {
+  const { user, isAdmin, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const navLinks = [
+    { label: 'DASHBOARD', path: '/dashboard' },
+    { label: 'TRANSACTIONS', path: '/transactions' },
+    { label: 'BUDGETS', path: '/budgets' },
+    { label: 'GOALS', path: '/goals' },
+    { label: 'INVESTMENTS', path: '/investments' },
+    { label: 'SUBSCRIPTIONS', path: '/subscriptions' },
+    { label: 'CALENDAR', path: '/calendar' },
+    { label: 'ANALYTICS', path: '/analytics' },
+    { label: 'AI ADVISOR', path: '/advisor' },
+    { label: 'SIMULATOR', path: '/simulator' },
+    { label: 'IMPORTS', path: '/imports' },
+    { label: 'NOTES & CHAT', path: '/notes' },
+  ];
+
   return (
-    <header className="h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
-      <div className="flex items-center gap-3">
-        {/* Mobile menu button */}
-        {onToggleMobileSidebar && (
-          <button
-            onClick={onToggleMobileSidebar}
-            className="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
-            aria-label="Toggle navigation menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-        )}
+    <header className="w-full bg-[#F7F7F4] border-b-2 border-black sticky top-0 z-50">
+      <div className="max-w-[1500px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        {/* Brand & Version Badge */}
+        <div className="flex items-center gap-3">
+          <Link to="/dashboard" className="flex items-center gap-1.5 group">
+            <span className="font-heading-tech text-2xl font-black tracking-tight text-black">
+              FINMATE
+            </span>
+            <span className="w-2.5 h-2.5 bg-[#D4FF00] border-2 border-black inline-block rounded-full ml-0.5"></span>
+          </Link>
 
-        {/* Brand identity */}
-        <div
-          onClick={() => onNavigateTab && onNavigateTab('dashboard')}
-          className="flex items-center gap-3 cursor-pointer group"
-        >
-          <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center text-white shadow-xs group-hover:bg-teal-700 transition">
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="hidden sm:inline-flex items-center px-2 py-0.5 border border-black bg-white text-[10px] font-mono-tech uppercase font-bold tracking-wider">
+            DECISION ENGINE V2.0
+          </div>
+        </div>
+
+        {/* Primary Desktop Navigation Links */}
+        <nav className="hidden xl:flex items-center gap-1 text-[11px] font-mono-tech font-bold uppercase tracking-wider text-neutral-800">
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-2 py-1 transition-colors border border-transparent ${
+                  isActive
+                    ? 'border-black bg-black text-white'
+                    : 'hover:border-black hover:bg-neutral-100'
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Right Action Elements */}
+        <div className="flex items-center gap-2">
+          {/* Refresh Button */}
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              title="Refresh Data"
+              className="p-1.5 border border-black bg-white hover:bg-neutral-100 active:bg-neutral-200 transition-colors"
             >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-900 tracking-tight text-lg">FinMate</span>
-              <span className="text-[10px] uppercase font-semibold tracking-wider px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-100 hidden sm:inline-block">
-                Personal Finance
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-500 hidden sm:block -mt-0.5">Financial Decision Support</p>
-          </div>
-        </div>
-      </div>
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
+          )}
 
-      {/* Global Quick Action / Search bar */}
-      <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
-        <div
-          onClick={() => onNavigateTab && onNavigateTab('ai-advisor')}
-          className="w-full flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 hover:border-slate-300 text-slate-400 text-xs cursor-pointer transition"
-        >
-          <Search className="w-3.5 h-3.5 text-slate-400" />
-          <span className="flex-1 text-slate-500">Ask FinMate a question or search...</span>
-          <span className="flex items-center gap-1 text-[11px] font-medium text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
-            <Sparkles className="w-3 h-3 text-teal-600" />
-            Ask
-          </span>
-        </div>
-      </div>
+          {/* Role Status Pills (Matching Screenshot 3) */}
+          {isAdmin ? (
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono-tech font-bold uppercase border border-black bg-[#CCFBF1] text-teal-950 hover:bg-[#99F6E4] transition-colors"
+            >
+              <Shield className="w-3 h-3 text-teal-800" />
+              <span>ADMIN [ACTIVE]</span>
+            </Link>
+          ) : (
+            <Link
+              to="/profile"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono-tech font-bold uppercase border border-black bg-[#DCFCE7] text-emerald-950 hover:bg-[#BBF7D0] transition-colors"
+            >
+              <User className="w-3 h-3 text-emerald-800" />
+              <span>USER [ACTIVE]</span>
+            </Link>
+          )}
 
-      {/* Right controls */}
-      <div className="flex items-center gap-3">
-        {onRefresh && (
+          {/* Quick Primary Action Button (Matching Screenshot 1 "CHECK A COMPANY ->") */}
           <button
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition shadow-xs"
-            title="Refresh financial data"
+            onClick={() => navigate('/transactions?action=new')}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 border-2 border-black bg-white font-mono-tech font-bold text-xs uppercase hover:bg-neutral-100 shadow-[1px_1px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-teal-600' : ''}`} />
+            <span>NEW TX</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
-        )}
 
-        {/* User Profile Pill */}
-        <div
-          onClick={() => onNavigateTab && onNavigateTab('profile')}
-          className="flex items-center gap-2.5 pl-3 border-l border-slate-200 cursor-pointer group"
-        >
-          <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200 group-hover:border-teal-300 transition">
-            <User className="w-4 h-4 text-slate-600" />
-          </div>
-          <div className="hidden sm:block text-left">
-            <p className="text-xs font-semibold text-slate-800 leading-tight">Primary Account</p>
-            <p className="text-[11px] text-slate-500 leading-tight">Personal Account</p>
-          </div>
+          {/* User / Logout */}
+          {user ? (
+            <button
+              onClick={logout}
+              title={`Logged in as ${user.email}. Click to logout.`}
+              className="p-1.5 border border-black bg-white hover:bg-red-50 text-red-600 transition-colors"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="px-2.5 py-1 border border-black bg-[#D4FF00] font-mono-tech font-bold text-xs uppercase inline-flex items-center gap-1"
+            >
+              <LogIn className="w-3 h-3" />
+              <span>LOGIN</span>
+            </Link>
+          )}
         </div>
+      </div>
+
+      {/* Responsive Secondary Subnav for Tablets & Mobile */}
+      <div className="xl:hidden overflow-x-auto flex items-center gap-1 px-4 py-1.5 border-t border-black bg-neutral-100 text-[10px] font-mono-tech font-bold uppercase whitespace-nowrap">
+        {navLinks.map((link) => {
+          const isActive = location.pathname === link.path;
+          return (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`px-2 py-0.5 border ${
+                isActive ? 'border-black bg-black text-white' : 'border-neutral-300 bg-white text-neutral-800'
+              }`}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
+        {isAdmin && (
+          <Link
+            to="/admin"
+            className="px-2 py-0.5 border border-teal-600 bg-teal-100 text-teal-900 font-bold"
+          >
+            ADMIN WORKSPACE
+          </Link>
+        )}
       </div>
     </header>
   );

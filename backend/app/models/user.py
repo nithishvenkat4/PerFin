@@ -18,6 +18,8 @@ class User(Base, TimestampMixin):
     )
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    role: Mapped[str] = mapped_column(String(20), default="USER", nullable=False)  # USER, ADMIN
 
     # Relationships
     financial_profile: Mapped[Optional["FinancialProfile"]] = relationship(
@@ -40,6 +42,35 @@ class User(Base, TimestampMixin):
         "Investment",
         back_populates="user",
         cascade="all, delete-orphan"
+    )
+    budgets: Mapped[List["Budget"]] = relationship(
+        "Budget",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    incomes: Mapped[List["Income"]] = relationship(
+        "Income",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    subscriptions: Mapped[List["Subscription"]] = relationship(
+        "Subscription",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    recurring_payments: Mapped[List["RecurringPayment"]] = relationship(
+        "RecurringPayment",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    audit_logs: Mapped[List["AuditLog"]] = relationship(
+        "AuditLog",
+        back_populates="user"
     )
     feedbacks: Mapped[List["Feedback"]] = relationship(
         "Feedback",
