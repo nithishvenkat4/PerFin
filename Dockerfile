@@ -1,12 +1,11 @@
-# ==============================================================================
-# Multi-Stage Production Dockerfile for FinMate Unified Web Application
-# Stage 1: Build React 19 + Vite Frontend
-# Stage 2: Python 3.13 Runtime serving FastAPI API + React Frontend SPA
-# ==============================================================================
+# ============================================================
+# Single-Container Unified Production Deployment for PerFin
+# Builds React frontend and serves both API and Web UI via FastAPI
+# Zero external database required (automatic SQLite + embedded docs)
+# ============================================================
 
-# Stage 1: Frontend Build
+# Step 1: Build React Frontend
 FROM node:20-alpine AS frontend-builder
-
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
@@ -15,39 +14,35 @@ RUN npm ci
 COPY frontend/ ./
 RUN npm run build
 
-# Stage 2: Unified Backend & Frontend Web Application
-FROM python:3.13-slim AS runner
-
+# Step 2: Build Python Backend & Package Frontend
+FROM python:3.13-slim
 WORKDIR /app
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv for fast dependency resolution
+# Install uv for ultra-fast dependency management
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Copy backend definition and install dependencies
-COPY backend/pyproject.toml backend/README.md ./backend/
-WORKDIR /app/backend
+# Copy backend dependencies and install
+COPY backend/pyproject.toml backend/README.md ./
 RUN uv pip install --system --no-cache -e .
 
-# Copy application source code and migrations
+# Copy backend source code
 COPY backend/app/ ./app/
 COPY backend/alembic/ ./alembic/
 COPY backend/alembic.ini ./
 
-# Copy built frontend SPA assets from Stage 1
+# Copy compiled frontend from Step 1 into backend's auto-detected dist folder
 COPY --from=frontend-builder /app/frontend/dist /app/frontend_dist
 
-# Set production environment variables
 ENV PYTHONUNBUFFERED=1
+ENV APP_NAME=PerFin
 ENV APP_ENV=production
 ENV FRONTEND_DIST_PATH=/app/frontend_dist
 ENV PORT=8000
 
 EXPOSE 8000
 
-# Start Uvicorn bound to the dynamic port assigned by cloud host
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

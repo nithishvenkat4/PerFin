@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.endpoints.health import router as health_router
+from app.api.v1.endpoints.notes_fallback import router as notes_document_router
 from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.exceptions import (
@@ -90,6 +91,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 # Routers
 app.include_router(health_router)
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(notes_document_router)
 
 # Frontend Single Page Application (SPA) Serving
 possible_dist_paths = [
