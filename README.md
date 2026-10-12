@@ -1,4 +1,4 @@
-# FinMate 2.0 — Personal Finance Management & Decision Support Platform
+# PERFIN — Personal Finance Management & Decision Support Platform
 
 **FinMate** is an enterprise-grade, full-stack personal finance and decision-support platform engineered for production environments and designed as a comprehensive demonstration project for **Full Stack Web Development Lab** evaluations (CAT-II, Viva, and Portfolio).
 
